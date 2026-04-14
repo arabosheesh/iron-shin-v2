@@ -31,35 +31,13 @@ const Register = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-6">
-      <form onSubmit={handleSignUp} className="bg-neutral-900 p-10 border-t-4 border-gym-red w-full max-w-md">
-        <h2 className="text-4xl font-oswald text-white uppercase mb-8 italic">New Recruitment</h2>
-        
-        <input 
-          type="text" placeholder="FULL NAME" 
-          onChange={(e) => setName(e.target.value)}
-          className="w-full bg-black border border-white/10 p-4 mb-4 text-white focus:border-gym-red outline-none" 
-        />
-        
-        <input 
-          type="email" placeholder="EMAIL ADDRESS" 
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full bg-black border border-white/10 p-4 mb-4 text-white focus:border-gym-red outline-none" 
-        />
-        
-        <input 
-          type="password" placeholder="PASSWORD" 
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full bg-black border border-white/10 p-4 mb-8 text-white focus:border-gym-red outline-none" 
-        />
-
-        <button type="submit" className="w-full bg-gym-red py-4 text-white font-black uppercase tracking-widest hover:bg-white hover:text-black transition">
-          Create Account
-        </button>
-      </form>
-    </div>
-  );
+  // Inside Register.jsx
+return (
+  <div className="bg-black/20 backdrop-blur-xl border border-white/10 p-10 shadow-2xl">
+    <h2 className="text-white text-3xl font-black italic uppercase mb-6">New Recruitment</h2>
+    {/* ... rest of your form ... */}
+  </div>
+);
 };
 
 export default Register;
