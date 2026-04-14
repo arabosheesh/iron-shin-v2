@@ -55,5 +55,8 @@ const Contact = () => {
         </button>
       </form>
     </section>
+    
   );
+  
 };
+export default Contact;
