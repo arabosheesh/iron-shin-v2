@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth"; // Make sure this line is here!
 
 const firebaseConfig = {
   apiKey: "AIzaSyBYSY4fXrGfSYhbJoDQgJv9XhBfCPMZAvg",
@@ -15,6 +15,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// CRITICAL: You MUST have 'export' before both of these
-export const db = getFirestore(app);
+// These two lines are the "Keys" to your gym's data
 export const auth = getAuth(app);
+export const db = getFirestore(app);
