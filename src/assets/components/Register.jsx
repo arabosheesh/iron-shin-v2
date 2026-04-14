@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { auth, db } from '../firebaseConfig'; 
+// Add an extra '../' to jump out of 'components', out of 'assets', and into 'src'
+import { auth, db } from "../../firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 
