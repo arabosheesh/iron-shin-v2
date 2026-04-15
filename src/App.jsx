@@ -5,21 +5,11 @@ import { doc, getDoc, updateDoc, increment, collection, onSnapshot } from "fireb
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   LogOut, Target, Trophy, Activity, Clock, 
-  Users, DollarSign, Settings, Zap, ChevronRight, Save, Edit3, Terminal
+  Users, DollarSign, Settings, Zap, ChevronRight, Save, Edit3
 } from "lucide-react";
 
 import Login from './assets/components/Login';
 import Register from './assets/components/Register';
-
-// --- HUD DECORATION (NO CHANGES) ---
-const HUDCorner = () => (
-  <div className="absolute inset-0 pointer-events-none border border-white/5">
-    <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-red-600/50" />
-    <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-red-600/50" />
-    <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-red-600/50" />
-    <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-red-600/50" />
-  </div>
-);
 
 const RankBadge = ({ rank }) => {
   const tiers = {
@@ -72,14 +62,10 @@ function App() {
     const userRef = doc(db, "users", user.uid);
     const nextSessions = (userData.sessions || 0) + 1;
     let nextRank = userData.rank;
-
-    if (nextSessions >= 50) {
-      nextRank = "Black Prajiat";
-    } else if (nextSessions >= 30) {
-      nextRank = "Red Prajiat";
-    } else if (nextSessions >= 10) {
-      nextRank = "Blue Prajiat";
-    }
+    
+    if (nextSessions >= 50) nextRank = "Black Prajiat";
+    else if (nextSessions >= 30) nextRank = "Red Prajiat";
+    else if (nextSessions >= 10) nextRank = "Blue Prajiat";
 
     await updateDoc(userRef, { sessions: increment(1), rank: nextRank });
   };
@@ -94,18 +80,34 @@ function App() {
             key="auth" 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
-            className="h-screen flex flex-col items-center justify-center p-6 bg-black" // BACKGROUND REMOVED
+            // FIXED: Vertical and Horizontal Centering
+            className="h-screen w-full flex flex-col items-center justify-center p-6 bg-[url('/assets/ring-bg.jpg')] bg-cover bg-center" 
+            style={{boxShadow: "inset 0 0 0 2000px rgba(0,0,0,0.85)"}}
           >
-            <h1 className="text-6xl font-black italic tracking-tighter uppercase mb-10">IRON <span className="text-red-600">SHIN</span></h1>
-            {showLogin ? <Login /> : <Register />}
-            <button onClick={() => setShowLogin(!showLogin)} className="mt-8 text-[10px] text-zinc-500 uppercase tracking-widest font-bold italic underline">{showLogin ? "Establish Profile" : "Login"}</button>
+            {/* Form Container */}
+            <div className="w-full max-w-[400px] flex flex-col items-center">
+              <h1 className="text-6xl font-black italic tracking-tighter uppercase mb-10 text-center">
+                IRON <span className="text-red-600">SHIN</span>
+              </h1>
+              
+              <div className="w-full">
+                {showLogin ? <Login /> : <Register />}
+              </div>
+
+              <button 
+                onClick={() => setShowLogin(!showLogin)} 
+                className="mt-8 text-[10px] text-zinc-500 uppercase tracking-widest font-bold italic underline hover:text-white transition-colors"
+              >
+                {showLogin ? "// Establish Profile" : "// Login"}
+              </button>
+            </div>
           </motion.div>
         ) : (
           <motion.div key="system" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col min-h-screen">
             <nav className="border-b border-zinc-800 bg-black/80 backdrop-blur-xl p-4 flex justify-between items-center sticky top-0 z-50">
               <div className="flex items-center gap-4">
                 <h2 className="text-2xl font-black italic uppercase tracking-tighter">IRON <span className="text-red-600">SHIN</span></h2>
-                <div className={`px-2 py-0.5 text-[9px] font-black uppercase tracking-widest ${isAdmin ? 'bg-red-600' : 'bg-zinc-800 text-zinc-400'}`}>
+                <div className={`px-2 py-0.5 text-[9px] font-black uppercase tracking-widest ${isAdmin ? 'bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.3)]' : 'bg-zinc-800 text-zinc-400'}`}>
                   {isAdmin ? "MASTER / KRU" : "Fighter"}
                 </div>
               </div>
@@ -128,34 +130,34 @@ function App() {
                   <div className="bg-zinc-900 border border-zinc-800 p-6 group cursor-pointer hover:border-red-600 transition-all">
                     <Settings className="text-zinc-600 group-hover:rotate-90 transition-transform duration-500" />
                     <p className="text-[10px] uppercase font-black text-zinc-500 mt-2">Dojo Config</p>
-                    <p className="text-lg font-black italic">UNLOCKED</p>
+                    <p className="text-lg font-black italic uppercase tracking-widest">Unlocked</p>
                   </div>
                 </div>
               )}
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <div className="lg:col-span-4 space-y-6">
-                  <div className="bg-zinc-900 border border-zinc-800 p-8">
+                  <div className="bg-zinc-900 border border-zinc-800 p-8 shadow-2xl">
                     <RankBadge rank={userData.rank} />
-                    <h3 className="text-4xl font-black uppercase italic tracking-tighter mt-4 break-words">{user.email.split('@')[0]}</h3>
+                    <h3 className="text-4xl font-black uppercase italic tracking-tighter mt-4 break-words leading-none">{user.email.split('@')[0]}</h3>
                     <div className="mt-8 space-y-6">
                       <div className="bg-black p-5 border-l-4 border-red-600">
                         <p className="text-[10px] text-zinc-500 uppercase font-black mb-1">Experience</p>
-                        <p className="text-4xl font-black italic">{userData.sessions} <span className="text-sm opacity-30">Classes</span></p>
+                        <p className="text-4xl font-black italic">{userData.sessions} <span className="text-sm opacity-30 uppercase font-bold italic">Classes</span></p>
                       </div>
-                      <button onClick={logTraining} className="w-full bg-white text-black py-4 font-black uppercase hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-2">
-                        <Zap size={18} /> Log Training
+                      <button onClick={logTraining} className="w-full bg-white text-black py-4 font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-2 italic">
+                        <Zap size={18} fill="currentColor" /> Log Training
                       </button>
                     </div>
                   </div>
                 </div>
 
                 <div className="lg:col-span-8">
-                  <div className="bg-zinc-900 border border-zinc-800 p-8 h-full">
+                  <div className="bg-zinc-900 border border-zinc-800 p-8 h-full shadow-2xl">
                     <div className="flex justify-between items-center mb-8 border-b border-zinc-800 pb-4">
                       <h4 className="text-2xl font-black italic uppercase flex items-center gap-2"><Clock size={22} className="text-red-600" /> Daily Intel</h4>
                       {isAdmin && (
-                        <button onClick={() => setIsEditingSchedule(!isEditingSchedule)} className="text-xs font-black text-zinc-500 hover:text-white flex items-center gap-2">
+                        <button onClick={() => setIsEditingSchedule(!isEditingSchedule)} className="text-xs font-black text-zinc-500 hover:text-white flex items-center gap-2 uppercase tracking-widest underline decoration-red-600">
                           <Edit3 size={14}/> {isEditingSchedule ? "Cancel" : "Modify Intel"}
                         </button>
                       )}
@@ -163,9 +165,9 @@ function App() {
                     
                     <div className="space-y-4">
                       {(gymSettings.schedule && gymSettings.schedule.length > 0 ? gymSettings.schedule : ['No Intel Available']).map((item, i) => (
-                        <div key={i} className="flex justify-between items-center p-5 bg-black border border-zinc-800">
-                          <span className="font-black uppercase tracking-widest text-sm">{item}</span>
-                          <span className="font-mono text-red-600 font-bold bg-red-600/10 px-2 py-1 italic">ACTIVE</span>
+                        <div key={i} className="flex justify-between items-center p-5 bg-black border border-zinc-800 group hover:bg-zinc-900 transition-colors">
+                          <span className="font-black uppercase tracking-widest text-sm italic">{item}</span>
+                          <span className="font-mono text-red-600 font-bold bg-red-600/10 px-2 py-1 italic border border-red-600/20">LIVE DATA</span>
                         </div>
                       ))}
                     </div>
@@ -174,15 +176,15 @@ function App() {
               </div>
 
               {isAdmin && (
-                <div className="bg-zinc-900 border border-zinc-800 overflow-hidden">
-                  <div className="p-4 bg-black/40 border-b border-zinc-800"><h4 className="text-[10px] font-black uppercase tracking-[0.3em]">Fighter Database</h4></div>
+                <div className="bg-zinc-900 border border-zinc-800 overflow-hidden shadow-2xl">
+                  <div className="p-4 bg-black/40 border-b border-zinc-800 italic"><h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Fighter Database // Registry</h4></div>
                   <table className="w-full text-left text-xs uppercase font-bold tracking-tight">
                     <tbody className="divide-y divide-zinc-800">
                       {fighters.map(f => (
-                        <tr key={f.id} className="hover:bg-red-600/5">
-                          <td className="p-4 italic">{f.email}</td>
-                          <td className="p-4 text-zinc-500">{f.rank}</td>
-                          <td className="p-4 text-right text-red-600 hover:text-white cursor-pointer">Manage</td>
+                        <tr key={f.id} className="hover:bg-red-600/5 transition-colors group">
+                          <td className="p-4 italic font-black group-hover:text-red-500">{f.email}</td>
+                          <td className="p-4 text-zinc-500">{f.rank || 'White Prajiat'}</td>
+                          <td className="p-4 text-right text-red-600 hover:text-white cursor-pointer italic font-black">Manage_System</td>
                         </tr>
                       ))}
                     </tbody>
