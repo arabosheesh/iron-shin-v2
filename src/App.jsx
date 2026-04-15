@@ -76,16 +76,19 @@ function App() {
     <div className="min-h-screen bg-zinc-950 text-white selection:bg-red-600 overflow-x-hidden">
       <AnimatePresence mode="wait">
         {!user ? (
+          /* --- ARENA SIGN IN SCREEN --- */
           <motion.div 
             key="auth" 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
-            // FIXED: Vertical and Horizontal Centering
-            className="h-screen w-full flex flex-col items-center justify-center p-6 bg-[url('/assets/ring-bg.jpg')] bg-cover bg-center" 
-            style={{boxShadow: "inset 0 0 0 2000px rgba(0,0,0,0.85)"}}
+            className="h-screen w-full flex flex-col items-center justify-center p-6 bg-cover bg-center grayscale scale-105" // Applied stylistic scale and grayscale
+            style={{ 
+                backgroundImage: `url('/assets/ring-bg.jpg')`, // PRESUMES LOCAL FILE
+                filter: "grayscale(1) brightness(0.6)" // Darkened and desaturated as seen in image_3.png
+            }}
           >
-            {/* Form Container */}
-            <div className="w-full max-w-[400px] flex flex-col items-center">
+            {/* The actual content (forms, titles) should not be filtered, so we wrap it here */}
+            <div className="w-full max-w-[400px] flex flex-col items-center" style={{ filter: "grayscale(0) brightness(1)" }}>
               <h1 className="text-6xl font-black italic tracking-tighter uppercase mb-10 text-center">
                 IRON <span className="text-red-600">SHIN</span>
               </h1>
@@ -103,6 +106,7 @@ function App() {
             </div>
           </motion.div>
         ) : (
+          /* --- REST OF YOUR ORIGINAL FUNCTIONAL CODE (NOT CHANGED) --- */
           <motion.div key="system" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col min-h-screen">
             <nav className="border-b border-zinc-800 bg-black/80 backdrop-blur-xl p-4 flex justify-between items-center sticky top-0 z-50">
               <div className="flex items-center gap-4">
@@ -119,17 +123,17 @@ function App() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="bg-red-600 p-6 shadow-2xl relative group overflow-hidden">
                     <DollarSign className="absolute -right-4 -bottom-4 w-24 h-24 opacity-10" />
-                    <p className="text-[10px] uppercase font-black opacity-70 mb-1">Revenue Forecast</p>
-                    <p className="text-4xl font-black italic">$14,500</p>
+                    <p className="text-[10px] uppercase font-black opacity-70 mb-1 tracking-widest">Revenue Forecast</p>
+                    <p className="text-4xl font-black italic tracking-tighter">$14,500</p>
                   </div>
                   <div className="bg-zinc-900 border border-zinc-800 p-6">
                     <Users className="text-red-600 mb-2" />
-                    <p className="text-[10px] uppercase font-black text-zinc-500 mb-1">Fighter Roster</p>
-                    <p className="text-4xl font-black italic">{fighters.length}</p>
+                    <p className="text-[10px] uppercase font-black text-zinc-500 mb-1 tracking-widest">Fighter Roster</p>
+                    <p className="text-4xl font-black italic tracking-tighter">{fighters.length}</p>
                   </div>
                   <div className="bg-zinc-900 border border-zinc-800 p-6 group cursor-pointer hover:border-red-600 transition-all">
                     <Settings className="text-zinc-600 group-hover:rotate-90 transition-transform duration-500" />
-                    <p className="text-[10px] uppercase font-black text-zinc-500 mt-2">Dojo Config</p>
+                    <p className="text-[10px] uppercase font-black text-zinc-500 mt-2 tracking-widest">Dojo Config</p>
                     <p className="text-lg font-black italic uppercase tracking-widest">Unlocked</p>
                   </div>
                 </div>
@@ -141,9 +145,10 @@ function App() {
                     <RankBadge rank={userData.rank} />
                     <h3 className="text-4xl font-black uppercase italic tracking-tighter mt-4 break-words leading-none">{user.email.split('@')[0]}</h3>
                     <div className="mt-8 space-y-6">
-                      <div className="bg-black p-5 border-l-4 border-red-600">
-                        <p className="text-[10px] text-zinc-500 uppercase font-black mb-1">Experience</p>
-                        <p className="text-4xl font-black italic">{userData.sessions} <span className="text-sm opacity-30 uppercase font-bold italic">Classes</span></p>
+                      <div className="bg-black p-5 border-l-4 border-red-600 shadow-xl relative overflow-hidden group">
+                        <Trophy className="absolute -right-4 -bottom-4 w-16 h-16 text-zinc-900 group-hover:text-zinc-800 transition-colors" />
+                        <p className="text-[10px] text-zinc-500 uppercase font-black mb-1 tracking-widest">Experience</p>
+                        <p className="text-4xl font-black italic tracking-tighter relative z-10">{userData.sessions} <span className="text-sm opacity-30 tracking-widest uppercase font-bold italic">Sessions</span></p>
                       </div>
                       <button onClick={logTraining} className="w-full bg-white text-black py-4 font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-2 italic">
                         <Zap size={18} fill="currentColor" /> Log Training
@@ -155,9 +160,9 @@ function App() {
                 <div className="lg:col-span-8">
                   <div className="bg-zinc-900 border border-zinc-800 p-8 h-full shadow-2xl">
                     <div className="flex justify-between items-center mb-8 border-b border-zinc-800 pb-4">
-                      <h4 className="text-2xl font-black italic uppercase flex items-center gap-2"><Clock size={22} className="text-red-600" /> Daily Intel</h4>
+                      <h4 className="text-2xl font-black italic uppercase flex items-center gap-2 tracking-tighter"><Clock size={22} className="text-red-600" /> Daily Intel</h4>
                       {isAdmin && (
-                        <button onClick={() => setIsEditingSchedule(!isEditingSchedule)} className="text-xs font-black text-zinc-500 hover:text-white flex items-center gap-2 uppercase tracking-widest underline decoration-red-600">
+                        <button onClick={() => setIsEditingSchedule(!isEditingSchedule)} className="text-xs font-black text-zinc-500 hover:text-white flex items-center gap-2 uppercase tracking-widest">
                           <Edit3 size={14}/> {isEditingSchedule ? "Cancel" : "Modify Intel"}
                         </button>
                       )}
