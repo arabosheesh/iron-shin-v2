@@ -12,7 +12,7 @@ import TrainerCard from './assets/components/Trainercard';
 
 function App() {
   const [user, setUser] = useState(null);
-  const [showLogin, setShowLogin] = useState(true); // Default to login screen
+  const [showLogin, setShowLogin] = useState(true);
   const [backgroundUrl, setBackgroundUrl] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -50,14 +50,14 @@ function App() {
 
   return (
     <div 
-      className="min-h-screen bg-cover bg-center bg-no-repeat transition-all duration-1000 flex flex-col"
+      className="min-h-screen bg-cover bg-center bg-no-repeat transition-all duration-1000 flex flex-col overflow-x-hidden"
       style={{ 
         backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('${backgroundUrl || 'https://wallpaperaccess.com/full/512564.jpg'}')`,
         backgroundColor: '#000'
       }}
     >
       {user ? (
-        /* DASHBOARD VIEW (Logged In) */
+        /* DASHBOARD VIEW */
         <main className="relative z-10 flex-1 flex flex-col">
           <nav className="p-4 bg-black/60 backdrop-blur-md flex justify-between items-center border-b border-red-600/30">
             <div className="flex items-center gap-4">
@@ -67,15 +67,11 @@ function App() {
                   {user.email}
                 </span>
               </div>
-              <button onClick={changePhoto} className="p-2 hover:bg-red-600 rounded-full transition-all group bg-white/5" title="Change Background">
+              <button onClick={changePhoto} className="p-2 hover:bg-red-600 rounded-full transition-all group bg-white/5">
                 <Pencil size={14} className="text-white" />
               </button>
             </div>
-            
-            <button 
-              onClick={handleLogout} 
-              className="flex items-center gap-2 bg-red-600 px-4 py-2 hover:bg-white hover:text-black transition-all font-black uppercase text-[10px] text-white"
-            >
+            <button onClick={handleLogout} className="flex items-center gap-2 bg-red-600 px-4 py-2 hover:bg-white hover:text-black transition-all font-black uppercase text-[10px] text-white">
               <LogOut size={14} /> LOGOUT
             </button>
           </nav>
@@ -91,24 +87,36 @@ function App() {
           </div>
         </main>
       ) : (
-        /* AUTH VIEW (Logged Out) */
-        <div className="flex-1 flex flex-col items-center justify-center p-6 relative z-10 bg-transparent">
-          <div className="w-full max-w-md animate-in fade-in zoom-in duration-500">
-             <div className="text-center mb-8">
-                <h2 className="text-5xl font-black italic text-white tracking-tighter uppercase">
-                  IRON <span className="text-red-600">SHIN</span>
-                </h2>
-                <p className="text-white/40 text-[10px] uppercase tracking-[0.5em] mt-2">Dojo Management System</p>
-             </div>
-
-            {showLogin ? <Login /> : <Register />}
+        /* THE CENTERED LOGIN VIEW */
+        <div className="flex-1 flex flex-col items-center justify-center p-6 relative z-10">
+          <div className="w-full max-w-md flex flex-col items-center">
             
+            {/* BRANDING LOGO (Centered above the card) */}
+            <div className="text-center mb-10">
+              <h2 className="text-6xl font-black italic text-white tracking-tighter uppercase leading-none">
+                IRON <span className="text-red-600">SHIN</span>
+              </h2>
+              <div className="h-1 w-20 bg-red-600 mx-auto mt-2"></div>
+              <p className="text-white/30 text-[9px] uppercase tracking-[0.6em] mt-4 ml-2">Dojo Management</p>
+            </div>
+
+            {/* THE CARD (Make sure Login.jsx doesn't have min-h-screen inside it!) */}
+            <div className="w-full shadow-2xl">
+              {showLogin ? <Login /> : <Register />}
+            </div>
+            
+            {/* TOGGLE BUTTON (Centered below the card) */}
             <button 
               onClick={() => setShowLogin(!showLogin)}
-              className="mt-8 w-full text-center text-white/40 uppercase text-[10px] tracking-[0.4em] hover:text-red-500 transition-all font-bold"
+              className="mt-10 text-white/40 uppercase text-[10px] tracking-[0.4em] hover:text-red-600 transition-all font-bold group"
             >
-              {showLogin ? "Don't have an account? Sign Up" : "Already a member? Sign In"}
+              {showLogin ? (
+                <>Don't have an account? <span className="text-white group-hover:text-red-600">Sign Up</span></>
+              ) : (
+                <>Already a member? <span className="text-white group-hover:text-red-600">Sign In</span></>
+              )}
             </button>
+            
           </div>
         </div>
       )}
