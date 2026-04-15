@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from './firebaseConfig';
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { Pencil, LogOut, User } from "lucide-react";
+import { doc, getDoc, updateDoc, arrayUnion, increment } from "firebase/firestore";
+import { motion, AnimatePresence } from "framer-motion"; // THE MOTION ENGINE
+import { Pencil, LogOut, User, Target, Calendar, Trophy, Zap, Activity } from "lucide-react";
 
 // Components
 import Register from './assets/components/Register';
 import Login from './assets/components/Login';
-import Contact from './assets/components/Contact';
-import TrainerCard from './assets/components/Trainercard';
 
 function App() {
   const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState({ sessions: 0, rank: 'Novice', streak: 0 });
   const [showLogin, setShowLogin] = useState(true);
   const [backgroundUrl, setBackgroundUrl] = useState('');
   const [loading, setLoading] = useState(true);
@@ -22,8 +22,10 @@ function App() {
       if (currentUser) {
         const userRef = doc(db, "users", currentUser.uid);
         const userSnap = await getDoc(userRef);
-        if (userSnap.exists() && userSnap.data().customBg) {
-          setBackgroundUrl(userSnap.data().customBg);
+        if (userSnap.exists()) {
+          const data = userSnap.data();
+          setUserData(data);
+          if (data.customBg) setBackgroundUrl(data.customBg);
         }
       }
       setLoading(false);
@@ -31,95 +33,161 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  const changePhoto = async () => {
-    const newUrl = prompt("Paste New Dojo Image URL:", backgroundUrl);
-    if (newUrl !== null) {
-      setBackgroundUrl(newUrl);
-      const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, { customBg: newUrl });
+  // PRO FEATURE: ATTENDANCE & RANK LOGIC
+  const logTraining = async () => {
+    if (!user) return;
+    const userRef = doc(db, "users", user.uid);
+    
+    // Logic: If sessions > 10, rank up to "Warrior"
+    const newSessions = (userData.sessions || 0) + 1;
+    let newRank = userData.rank || 'Novice';
+    if (newSessions >= 10) newRank = 'Warrior';
+    if (newSessions >= 50) newRank = 'Elite';
+
+    try {
+      await updateDoc(userRef, {
+        sessions: increment(1),
+        rank: newRank,
+        lastSession: new Date().toISOString()
+      });
+      setUserData(prev => ({ ...prev, sessions: newSessions, rank: newRank }));
+      alert("SESSION LOGGED. OUSS!");
+    } catch (err) {
+      console.error("Sync Error:", err);
     }
   };
 
   const handleLogout = () => signOut(auth);
 
   if (loading) return (
-    <div className="min-h-screen bg-black flex items-center justify-center text-white font-black italic tracking-widest">
-      PREPARING THE ARENA...
+    <div className="min-h-screen bg-black flex items-center justify-center text-white font-black italic">
+      SYNCHRONIZING COMBAT DATA...
     </div>
   );
 
   return (
     <div 
-      className="min-h-screen bg-cover bg-center bg-no-repeat transition-all duration-1000 flex flex-col overflow-x-hidden"
+      className="min-h-screen bg-cover bg-center bg-no-repeat transition-all duration-1000 flex flex-col relative overflow-hidden"
       style={{ 
-        backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), url('${backgroundUrl || 'https://wallpaperaccess.com/full/512564.jpg'}')`,
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.95)), url('${backgroundUrl || 'https://wallpaperaccess.com/full/512564.jpg'}')`,
         backgroundColor: '#000'
       }}
     >
+      <AnimatePresence>
       {user ? (
-        /* DASHBOARD VIEW */
-        <main className="relative z-10 flex-1 flex flex-col">
-          <nav className="p-4 bg-black/60 backdrop-blur-md flex justify-between items-center border-b border-red-600/30">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 bg-white/5 px-3 py-1 rounded-full border border-white/10">
-                <User size={14} className="text-red-500" />
-                <span className="uppercase tracking-tighter font-bold text-[10px] text-white">
-                  {user.email}
-                </span>
-              </div>
-              <button onClick={changePhoto} className="p-2 hover:bg-red-600 rounded-full transition-all group bg-white/5">
-                <Pencil size={14} className="text-white" />
-              </button>
-            </div>
-            <button onClick={handleLogout} className="flex items-center gap-2 bg-red-600 px-4 py-2 hover:bg-white hover:text-black transition-all font-black uppercase text-[10px] text-white">
-              <LogOut size={14} /> LOGOUT
+        <motion.main 
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }}
+          className="relative z-10 flex-1 flex flex-col"
+        >
+          {/* NAV BAR */}
+          <nav className="p-4 bg-black/60 backdrop-blur-xl flex justify-between items-center border-b border-red-600/30">
+            <motion.h1 whileHover={{ scale: 1.05 }} className="text-xl font-black italic text-white">
+              IRON <span className="text-red-600">SHIN</span>
+            </motion.h1>
+            <button onClick={handleLogout} className="bg-red-600 p-2 hover:bg-white hover:text-black transition-all">
+              <LogOut size={16} />
             </button>
           </nav>
-          
-          <div className="p-8 max-w-6xl mx-auto w-full">
-            <h1 className="text-7xl font-black italic uppercase mb-8 tracking-tighter text-white">
-              IRON <span className="text-red-600">SHIN</span>
-            </h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <TrainerCard name="Buakaw Banchamek" specialty="Muay Boran" bio="The legendary fighter." />
-              <Contact />
-            </div>
-          </div>
-        </main>
-      ) : (
-        /* THE CENTERED LOGIN VIEW */
-        <div className="flex-1 flex flex-col items-center justify-center p-6 relative z-10">
-          <div className="w-full max-w-md flex flex-col items-center">
+
+          {/* BENTO GRID SYSTEM */}
+          <div className="p-6 lg:p-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-4 gap-4">
             
-            {/* BRANDING LOGO (Centered above the card) */}
+            {/* 1. FIGHTER STATS (Framer Motion Entrance) */}
+            <motion.div 
+              initial={{ x: -50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="md:col-span-1 bg-white/5 border border-white/10 p-6 backdrop-blur-md"
+            >
+              <p className="text-[10px] text-red-500 font-black uppercase tracking-widest mb-1">Current Class: {userData.rank}</p>
+              <h2 className="text-2xl font-black text-white italic uppercase mb-6">Operative</h2>
+              
+              <div className="space-y-4">
+                <div className="bg-black/40 p-3 border-l-2 border-red-600">
+                  <p className="text-[9px] text-gray-500 uppercase">Total Sessions</p>
+                  <p className="text-2xl font-black text-white">{userData.sessions || 0}</p>
+                </div>
+                <button 
+                  onClick={logTraining}
+                  className="w-full bg-red-600 py-4 text-white font-black uppercase tracking-tighter hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2"
+                >
+                  <Activity size={18} /> LOG SESSION
+                </button>
+              </div>
+            </motion.div>
+
+            {/* 2. LIVE INTEL (Schedule) */}
+            <motion.div 
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="md:col-span-2 bg-black/40 border border-white/10 p-6 backdrop-blur-md"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-black text-white italic uppercase">Training Schedule</h2>
+                <Calendar size={18} className="text-red-600" />
+              </div>
+              <div className="grid gap-3">
+                {['Muay Thai', 'BJJ Fundamentals', 'No-Gi Sparring'].map((type, i) => (
+                  <div key={i} className="flex justify-between p-4 bg-white/5 border border-white/5 hover:border-red-600/50 transition-colors">
+                    <span className="text-sm font-bold text-white uppercase">{type}</span>
+                    <span className="text-xs text-red-500 font-mono">18:00</span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* 3. TROPHY ROOM (Leaderboard) */}
+            <motion.div 
+              initial={{ x: 50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="md:col-span-1 bg-white/5 border border-white/10 p-6 backdrop-blur-md"
+            >
+              <h2 className="text-xl font-black text-white italic uppercase mb-6 flex items-center gap-2">
+                <Trophy size={18} className="text-yellow-500" /> Top Ranks
+              </h2>
+              <div className="space-y-4">
+                 {[1,2,3].map(i => (
+                   <div key={i} className="flex items-center justify-between">
+                     <span className="text-xs font-bold text-white/40">#0{i}</span>
+                     <span className="text-xs font-black text-white uppercase">User_{i}42</span>
+                     <span className="text-[10px] text-red-500">{(4-i)*10} SESS</span>
+                   </div>
+                 ))}
+              </div>
+            </motion.div>
+
+          </div>
+        </motion.main>
+      ) : (
+        /* --- AUTH VIEW (Centered & Animated) --- */
+        <motion.div 
+          key="auth"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 1.1, opacity: 0 }}
+          className="flex-1 flex flex-col items-center justify-center p-6 relative z-10"
+        >
+          <div className="w-full max-w-md">
             <div className="text-center mb-10">
-              <h2 className="text-6xl font-black italic text-white tracking-tighter uppercase leading-none">
+              <h2 className="text-6xl font-black italic text-white tracking-tighter uppercase leading-none mb-2">
                 IRON <span className="text-red-600">SHIN</span>
               </h2>
-              <div className="h-1 w-20 bg-red-600 mx-auto mt-2"></div>
-              <p className="text-white/30 text-[9px] uppercase tracking-[0.6em] mt-4 ml-2">Dojo Management</p>
+              <div className="h-1 w-20 bg-red-600 mx-auto"></div>
             </div>
-
-            {/* THE CARD (Make sure Login.jsx doesn't have min-h-screen inside it!) */}
-            <div className="w-full shadow-2xl">
-              {showLogin ? <Login /> : <Register />}
-            </div>
-            
-            {/* TOGGLE BUTTON (Centered below the card) */}
+            {showLogin ? <Login /> : <Register />}
             <button 
               onClick={() => setShowLogin(!showLogin)}
-              className="mt-10 text-white/40 uppercase text-[10px] tracking-[0.4em] hover:text-red-600 transition-all font-bold group"
+              className="mt-10 w-full text-center text-white/20 uppercase text-[10px] tracking-[0.5em] hover:text-red-600 transition-colors font-bold"
             >
-              {showLogin ? (
-                <>Don't have an account? <span className="text-white group-hover:text-red-600">Sign Up</span></>
-              ) : (
-                <>Already a member? <span className="text-white group-hover:text-red-600">Sign In</span></>
-              )}
+              {showLogin ? "Establish New Profile" : "Existing Operative Sign-in"}
             </button>
-            
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </div>
   );
 }
