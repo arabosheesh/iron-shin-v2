@@ -5,11 +5,21 @@ import { doc, getDoc, updateDoc, increment, collection, onSnapshot } from "fireb
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   LogOut, Target, Trophy, Activity, Clock, 
-  Users, DollarSign, Settings, Zap, ChevronRight, Save, Edit3
+  Users, DollarSign, Settings, Zap, ChevronRight, Save, Edit3, Terminal
 } from "lucide-react";
 
 import Login from './assets/components/Login';
 import Register from './assets/components/Register';
+
+// --- HUD DECORATION (NO CHANGES) ---
+const HUDCorner = () => (
+  <div className="absolute inset-0 pointer-events-none border border-white/5">
+    <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-red-600/50" />
+    <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-red-600/50" />
+    <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-red-600/50" />
+    <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-red-600/50" />
+  </div>
+);
 
 const RankBadge = ({ rank }) => {
   const tiers = {
@@ -41,17 +51,12 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        // 1. Listen to Personal User Data
         onSnapshot(doc(db, "users", currentUser.uid), (doc) => {
           if (doc.exists()) setUserData(doc.data());
         });
-
-        // 2. Listen to Global Gym Settings
         onSnapshot(doc(db, "gym", "settings"), (doc) => {
           if (doc.exists()) setGymSettings(doc.data());
         });
-
-        // 3. Admin Roster
         if (currentUser.email === "alwahaibishahin171@gmail.com") {
           onSnapshot(collection(db, "users"), (snapshot) => {
             setFighters(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
@@ -63,18 +68,19 @@ function App() {
     return () => unsubscribe();
   }, []);
 
-  const updateSchedule = async (newSchedule) => {
-    await updateDoc(doc(db, "gym", "settings"), { schedule: newSchedule });
-    setIsEditingSchedule(false);
-  };
-
   const logTraining = async () => {
     const userRef = doc(db, "users", user.uid);
     const nextSessions = (userData.sessions || 0) + 1;
     let nextRank = userData.rank;
-    if (nextSessions >= 10 && nextSessions < 30) nextRank = "Blue Prajiat";
-    if (nextSessions >= 30 && nextSessions < 50) nextRank = "Red Prajiat";
-    if (nextSessions >= 50) nextRank = "Black Prajiat";
+
+    if (nextSessions >= 50) {
+      nextRank = "Black Prajiat";
+    } else if (nextSessions >= 30) {
+      nextRank = "Red Prajiat";
+    } else if (nextSessions >= 10) {
+      nextRank = "Blue Prajiat";
+    }
+
     await updateDoc(userRef, { sessions: increment(1), rank: nextRank });
   };
 
@@ -84,7 +90,12 @@ function App() {
     <div className="min-h-screen bg-zinc-950 text-white selection:bg-red-600 overflow-x-hidden">
       <AnimatePresence mode="wait">
         {!user ? (
-          <motion.div key="auth" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-screen flex flex-col items-center justify-center p-6 bg-[url('https://wallpaperaccess.com/full/512564.jpg')] bg-cover bg-center" style={{boxShadow: "inset 0 0 0 2000px rgba(0,0,0,0.85)"}}>
+          <motion.div 
+            key="auth" 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            className="h-screen flex flex-col items-center justify-center p-6 bg-black" // BACKGROUND REMOVED
+          >
             <h1 className="text-6xl font-black italic tracking-tighter uppercase mb-10">IRON <span className="text-red-600">SHIN</span></h1>
             {showLogin ? <Login /> : <Register />}
             <button onClick={() => setShowLogin(!showLogin)} className="mt-8 text-[10px] text-zinc-500 uppercase tracking-widest font-bold italic underline">{showLogin ? "Establish Profile" : "Login"}</button>
@@ -114,7 +125,7 @@ function App() {
                     <p className="text-[10px] uppercase font-black text-zinc-500 mb-1">Fighter Roster</p>
                     <p className="text-4xl font-black italic">{fighters.length}</p>
                   </div>
-                  <div className="bg-zinc-900 border border-zinc-800 p-6 group cursor-pointer hover:border-red-600 transition-all" onClick={() => alert("Background Update coming soon!")}>
+                  <div className="bg-zinc-900 border border-zinc-800 p-6 group cursor-pointer hover:border-red-600 transition-all">
                     <Settings className="text-zinc-600 group-hover:rotate-90 transition-transform duration-500" />
                     <p className="text-[10px] uppercase font-black text-zinc-500 mt-2">Dojo Config</p>
                     <p className="text-lg font-black italic">UNLOCKED</p>
@@ -151,7 +162,7 @@ function App() {
                     </div>
                     
                     <div className="space-y-4">
-                      {(gymSettings.schedule || ['No Intel Available']).map((item, i) => (
+                      {(gymSettings.schedule && gymSettings.schedule.length > 0 ? gymSettings.schedule : ['No Intel Available']).map((item, i) => (
                         <div key={i} className="flex justify-between items-center p-5 bg-black border border-zinc-800">
                           <span className="font-black uppercase tracking-widest text-sm">{item}</span>
                           <span className="font-mono text-red-600 font-bold bg-red-600/10 px-2 py-1 italic">ACTIVE</span>
