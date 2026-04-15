@@ -8,10 +8,10 @@ import {
   Clock, Shield, ChevronRight, Activity, Terminal
 } from "lucide-react";
 
+// YOUR EXISTING COMPONENTS (DO NOT CHANGE THESE FILES)
 import Login from './assets/components/Login';
 import Register from './assets/components/Register';
 
-// --- HUD ACCENTS ---
 const HUDCorner = () => (
   <div className="absolute inset-0 pointer-events-none border border-white/5">
     <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-red-600/50" />
@@ -76,28 +76,30 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#020202] text-zinc-100 font-sans selection:bg-red-600 selection:text-white">
-      {/* SCANLINE OVERLAY */}
       <div className="fixed inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.01),rgba(0,0,255,0.03))] bg-[length:100%_2px,3px_100%] z-[100] opacity-20" />
 
       <AnimatePresence mode="wait">
         {!user ? (
+          /* --- AUTH SCREEN: WRAPPING YOUR COMPONENTS --- */
           <motion.div key="auth" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-screen flex items-center justify-center p-6 relative">
             <div className="w-full max-w-md bg-zinc-950/50 border border-white/5 p-10 relative overflow-hidden backdrop-blur-3xl shadow-2xl">
               <HUDCorner />
               <div className="text-center relative z-10">
                 <h1 className="text-7xl font-black italic tracking-tighter uppercase mb-2">IRON <span className="text-red-600">SHIN</span></h1>
                 <div className="h-1 w-20 bg-red-600 mx-auto mb-10" />
+                
+                {/* YOUR ORIGINAL COMPONENTS RENDER HERE */}
                 {showLogin ? <Login /> : <Register />}
+                
                 <button onClick={() => setShowLogin(!showLogin)} className="mt-8 text-[10px] text-zinc-600 uppercase tracking-widest font-black hover:text-red-500 transition-colors">
-                  {showLogin ? "Establish New Profile" : "Login to Command"}
+                  {showLogin ? "// ESTABLISH NEW PROFILE" : "// RETURN TO UPLINK"}
                 </button>
               </div>
             </div>
           </motion.div>
         ) : (
+          /* --- THE NEW DASHBOARD UI --- */
           <motion.div key="system" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col min-h-screen">
-            
-            {/* NAV */}
             <nav className="h-16 border-b border-white/5 bg-black/60 backdrop-blur-xl px-6 flex justify-between items-center sticky top-0 z-[110]">
               <div className="flex items-center gap-6">
                 <h2 className="text-xl font-black italic uppercase tracking-tighter">IRON <span className="text-red-600">SHIN</span></h2>
@@ -112,12 +114,10 @@ function App() {
             </nav>
 
             <main className="flex-1 p-6 lg:p-10 max-w-[1600px] mx-auto w-full space-y-8">
-              
-              {/* ADMIN HUD TOP ROW */}
               {isAdmin && (
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="md:col-span-2 bg-red-600/10 border border-red-600/20 p-6 relative group overflow-hidden">
-                    <DollarSign className="absolute -right-6 -bottom-6 w-32 h-32 opacity-10 group-hover:scale-110 transition-transform" />
+                    <DollarSign className="absolute -right-6 -bottom-6 w-32 h-32 opacity-10" />
                     <p className="text-[10px] uppercase font-black tracking-widest text-red-500 mb-1 flex items-center gap-2"><Activity size={12}/> Revenue Flow</p>
                     <p className="text-5xl font-black italic tracking-tighter">$14,500.00</p>
                   </div>
@@ -125,7 +125,7 @@ function App() {
                     <p className="text-[10px] uppercase font-black tracking-widest text-zinc-500 mb-1 flex items-center gap-2"><Users size={12}/> Operatives</p>
                     <p className="text-5xl font-black italic tracking-tighter">{fighters.length}</p>
                   </div>
-                  <div className="bg-zinc-900/20 border border-white/5 border-dashed p-6 flex items-center justify-between group hover:border-zinc-700 transition-colors">
+                  <div className="bg-zinc-900/20 border border-white/5 border-dashed p-6 flex items-center justify-between opacity-40">
                     <div>
                       <p className="text-[10px] uppercase font-black tracking-widest text-zinc-700">Dojo Config</p>
                       <p className="text-xl font-black italic uppercase tracking-tighter text-zinc-600">STANDBY</p>
@@ -136,42 +136,34 @@ function App() {
               )}
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                
-                {/* PROFILE CARD */}
-                <div className="lg:col-span-4 space-y-6">
+                <div className="lg:col-span-4">
                   <div className="bg-zinc-900/40 border border-white/5 p-8 backdrop-blur-md relative overflow-hidden group">
                     <HUDCorner />
                     <RankBadge rank={userData.rank} />
                     <h3 className="text-4xl font-black uppercase italic tracking-tighter mt-6 leading-none group-hover:text-red-500 transition-colors">
                       {user.email.split('@')[0]}
                     </h3>
-                    
                     <div className="mt-10 space-y-8">
                       <div className="bg-black/50 p-6 border-l-4 border-red-600 shadow-xl">
-                        <p className="text-[9px] text-zinc-600 uppercase font-black tracking-widest mb-1 flex items-center gap-2">
-                          <Shield size={10} /> Combat Experience
-                        </p>
+                        <p className="text-[9px] text-zinc-600 uppercase font-black tracking-widest mb-1 flex items-center gap-2"><Shield size={10} /> Combat Experience</p>
                         <p className="text-5xl font-black italic tracking-tighter">{userData.sessions} <span className="text-xs not-italic text-zinc-700 uppercase">Classes</span></p>
                       </div>
-
                       <div className="space-y-3">
                         <div className="flex justify-between text-[9px] uppercase font-black text-zinc-600">
                           <span className="tracking-[0.2em]">Tier Progress</span>
                           <span className="text-white">{userData.sessions} / 50</span>
                         </div>
                         <div className="h-1 w-full bg-zinc-950 rounded-full overflow-hidden">
-                          <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min((userData.sessions / 50) * 100, 100)}%` }} className="h-full bg-red-600 shadow-[0_0_20px_rgba(220,38,38,0.5)]" />
+                          <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min((userData.sessions / 50) * 100, 100)}%` }} className="h-full bg-red-600" />
                         </div>
                       </div>
-
-                      <button onClick={logTraining} className="w-full bg-red-600 text-white py-5 font-black uppercase tracking-[.3em] hover:bg-white hover:text-black transition-all active:scale-95 flex items-center justify-center gap-2 italic relative overflow-hidden group">
+                      <button onClick={logTraining} className="w-full bg-red-600 text-white py-5 font-black uppercase tracking-[.3em] hover:bg-white hover:text-black transition-all active:scale-95 flex items-center justify-center gap-2 italic">
                         <Zap size={18} fill="currentColor" /> Log Training
                       </button>
                     </div>
                   </div>
                 </div>
 
-                {/* MAIN CONSOLE AREA */}
                 <div className="lg:col-span-8">
                   <div className="bg-zinc-950/50 border border-white/5 h-full relative overflow-hidden">
                     <div className="p-6 border-b border-white/5 bg-black/40 flex items-center justify-between">
@@ -181,34 +173,26 @@ function App() {
                           {isAdmin ? "Global Fighter Registry" : "Daily Training Intel"}
                         </h4>
                       </div>
-                      <div className="text-[9px] font-black text-zinc-700 tracking-widest uppercase">SYST_SECURE_v3.0</div>
                     </div>
-
                     <div className="p-2">
                       {isAdmin ? (
                         <div className="grid gap-2">
                           {fighters.map(f => (
-                            <div key={f.id} className="p-4 bg-zinc-900/20 border border-white/5 hover:border-red-600/30 hover:bg-zinc-900/40 transition-all flex items-center justify-between group">
+                            <div key={f.id} className="p-4 bg-zinc-900/20 border border-white/5 flex items-center justify-between group">
                               <div>
                                 <p className="text-sm font-black uppercase tracking-tight text-zinc-400 group-hover:text-white">{f.email}</p>
                                 <p className="text-[9px] font-black uppercase tracking-widest text-zinc-600 mt-1">{f.rank || 'White Prajiat'}</p>
                               </div>
-                              <button className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-zinc-600 hover:text-red-500 transition-colors">
-                                Access Profile <ChevronRight size={14} />
-                              </button>
+                              <ChevronRight size={14} className="text-zinc-800" />
                             </div>
                           ))}
                         </div>
                       ) : (
                         <div className="grid gap-3 p-4">
                           {['Muay Thai Basics', 'Advanced Striking', 'Sparring Class'].map((c, i) => (
-                            <div key={i} className="group p-6 bg-black/40 border border-white/5 hover:border-red-600/50 transition-all flex justify-between items-center relative overflow-hidden shadow-lg">
-                               <div className="absolute inset-0 bg-gradient-to-r from-red-600/0 to-red-600/5 group-hover:translate-x-full transition-transform duration-700" />
-                               <div className="flex items-center gap-4 relative z-10">
-                                 <Clock size={16} className="text-red-600" />
-                                 <span className="font-black uppercase tracking-widest text-sm">{c}</span>
-                               </div>
-                               <span className="font-mono text-red-600 font-black bg-red-600/10 px-3 py-1 border border-red-600/20 relative z-10">18:{30 + (i*15)}</span>
+                            <div key={i} className="p-6 bg-black/40 border border-white/5 flex justify-between items-center relative overflow-hidden">
+                               <span className="font-black uppercase tracking-widest text-sm relative z-10">{c}</span>
+                               <span className="font-mono text-red-600 font-black bg-red-600/10 px-3 py-1 border border-red-600/20">18:{30 + (i*15)}</span>
                             </div>
                           ))}
                         </div>
