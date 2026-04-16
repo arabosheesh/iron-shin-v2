@@ -72,7 +72,7 @@ function App() {
 
   if (loading) return (
     <div className="h-screen bg-black flex flex-col items-center justify-center text-yellow-500 font-black tracking-[.5em] animate-pulse italic">
-      <Zap className="mb-4 animate-bounce" />
+      <Zap className="mb-4" />
       INITIALIZING DOJO...
     </div>
   );
@@ -88,6 +88,7 @@ function App() {
             animate={{ opacity: 1 }} 
             className="relative h-screen w-full flex flex-col items-center justify-center p-6 overflow-hidden"
           >
+            {/* BACKGROUND LAYER */}
             <div 
               className="absolute inset-0 z-0 bg-cover bg-center"
               style={{ 
@@ -97,12 +98,13 @@ function App() {
             />
             <div className="absolute inset-0 z-10 bg-black/40 shadow-[inset_0_0_150px_rgba(0,0,0,1)]" />
 
+            {/* THE CARD CONTAINER (REMAINS INTACT) */}
             <div className="relative z-20 w-full max-w-[400px] flex flex-col items-center">
-              {/* GLOW REMOVED FROM TITLE */}
               <h1 className="text-6xl font-black italic tracking-tighter uppercase mb-10 text-center">
                 IRON <span className="text-yellow-500">SHIN</span>
               </h1>
               
+              {/* THE FORM CARD */}
               <div className="w-full">
                 {showLogin ? <Login /> : <Register />}
               </div>
@@ -160,7 +162,7 @@ function App() {
                         <p className="text-[10px] text-zinc-500 uppercase font-black mb-1 tracking-widest">Experience</p>
                         <p className="text-4xl font-black italic tracking-tighter relative z-10">{userData.sessions} <span className="text-sm opacity-30 tracking-widest uppercase font-bold italic">Sessions</span></p>
                       </div>
-                      <button onClick={logTraining} className="w-full bg-white text-black py-4 font-black uppercase tracking-widest hover:bg-yellow-500 transition-all flex items-center justify-center gap-2 italic border-none">
+                      <button onClick={logTraining} className="w-full bg-white text-black py-4 font-black uppercase tracking-widest hover:bg-yellow-500 transition-all flex items-center justify-center gap-2 italic">
                         <Zap size={18} fill="currentColor" /> Log Training
                       </button>
                     </div>
