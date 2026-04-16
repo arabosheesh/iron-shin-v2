@@ -98,14 +98,23 @@ function App() {
             />
             <div className="absolute inset-0 z-10 bg-black/40 shadow-[inset_0_0_150px_rgba(0,0,0,1)]" />
 
-            {/* THE CARD CONTAINER (REMAINS INTACT) */}
-            <div className="relative z-20 w-full max-w-[400px] flex flex-col items-center">
+            {/* CONTENT LAYER */}
+            <div className="relative z-20 w-full max-w-[420px] flex flex-col items-center">
               <h1 className="text-6xl font-black italic tracking-tighter uppercase mb-10 text-center">
                 IRON <span className="text-yellow-500">SHIN</span>
               </h1>
               
-              {/* THE FORM CARD */}
-              <div className="w-full">
+              {/* --- PROPER FORM CARD --- */}
+              <div className="w-full bg-black/80 border border-zinc-800 p-8 shadow-2xl backdrop-blur-md relative">
+                {/* Form Header */}
+                <div className="mb-8 border-b border-zinc-900 pb-4 flex justify-between items-end">
+                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-yellow-500 italic">
+                    {showLogin ? "System_Login" : "Registry_Protocol"}
+                  </p>
+                  <p className="text-[8px] text-zinc-600 font-bold tracking-widest uppercase">v2.0.26</p>
+                </div>
+
+                {/* Internal Form Components */}
                 {showLogin ? <Login /> : <Register />}
               </div>
 
@@ -113,7 +122,7 @@ function App() {
                 onClick={() => setShowLogin(!showLogin)} 
                 className="mt-8 text-[10px] text-zinc-400 uppercase tracking-widest font-bold italic underline decoration-yellow-500/50 hover:text-yellow-500 transition-colors"
               >
-                {showLogin ? "// Establish Profile" : "// Return to Arena Login"}
+                {showLogin ? "// Establish New Profile" : "// Return to Arena Login"}
               </button>
             </div>
           </motion.div>
