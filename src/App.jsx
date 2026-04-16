@@ -81,15 +81,18 @@ function App() {
             key="auth" 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
-            className="h-screen w-full flex flex-col items-center justify-center p-6 bg-cover bg-center grayscale scale-105" // Applied stylistic scale and grayscale
+            className="h-screen w-full flex flex-col items-center justify-center p-6 bg-cover bg-center" 
             style={{ 
-                backgroundImage: `url('/assets/ring-bg.jpg')`, // PRESUMES LOCAL FILE
-                filter: "grayscale(1) brightness(0.6)" // Darkened and desaturated as seen in image_3.png
+                // Hardcoded high-res ring background
+                backgroundImage: `url('https://wallpaperaccess.com/full/512564.jpg')`, 
+                // Darkened grayscale filter for that aggressive look
+                filter: "grayscale(1) brightness(0.4)",
+                boxShadow: "inset 0 0 0 2000px rgba(0,0,0,0.7)"
             }}
           >
-            {/* The actual content (forms, titles) should not be filtered, so we wrap it here */}
-            <div className="w-full max-w-[400px] flex flex-col items-center" style={{ filter: "grayscale(0) brightness(1)" }}>
-              <h1 className="text-6xl font-black italic tracking-tighter uppercase mb-10 text-center">
+            {/* The content wrapper fixes the brightness/grayscale for the login form */}
+            <div className="w-full max-w-[400px] flex flex-col items-center" style={{ filter: "grayscale(0) brightness(2)" }}>
+              <h1 className="text-6xl font-black italic tracking-tighter uppercase mb-10 text-center drop-shadow-[0_0_15px_rgba(220,38,38,0.5)]">
                 IRON <span className="text-red-600">SHIN</span>
               </h1>
               
@@ -99,14 +102,14 @@ function App() {
 
               <button 
                 onClick={() => setShowLogin(!showLogin)} 
-                className="mt-8 text-[10px] text-zinc-500 uppercase tracking-widest font-bold italic underline hover:text-white transition-colors"
+                className="mt-8 text-[10px] text-zinc-400 uppercase tracking-widest font-bold italic underline hover:text-white transition-colors"
               >
-                {showLogin ? "// Establish Profile" : "// Login"}
+                {showLogin ? "// Establish Profile" : "// Return to Arena Login"}
               </button>
             </div>
           </motion.div>
         ) : (
-          /* --- REST OF YOUR ORIGINAL FUNCTIONAL CODE (NOT CHANGED) --- */
+          /* --- DASHBOARD --- */
           <motion.div key="system" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col min-h-screen">
             <nav className="border-b border-zinc-800 bg-black/80 backdrop-blur-xl p-4 flex justify-between items-center sticky top-0 z-50">
               <div className="flex items-center gap-4">
@@ -162,7 +165,7 @@ function App() {
                     <div className="flex justify-between items-center mb-8 border-b border-zinc-800 pb-4">
                       <h4 className="text-2xl font-black italic uppercase flex items-center gap-2 tracking-tighter"><Clock size={22} className="text-red-600" /> Daily Intel</h4>
                       {isAdmin && (
-                        <button onClick={() => setIsEditingSchedule(!isEditingSchedule)} className="text-xs font-black text-zinc-500 hover:text-white flex items-center gap-2 uppercase tracking-widest">
+                        <button onClick={() => setIsEditingSchedule(!isEditingSchedule)} className="text-xs font-black text-zinc-500 hover:text-white flex items-center gap-2 uppercase tracking-widest underline decoration-red-600">
                           <Edit3 size={14}/> {isEditingSchedule ? "Cancel" : "Modify Intel"}
                         </button>
                       )}
