@@ -24,29 +24,25 @@ const Register = () => {
 
   return (
     <form onSubmit={handleRegister} className="space-y-4 w-full">
-      <div className="space-y-1">
-        <input
-          type="email"
-          placeholder="NEW FIGHTER EMAIL"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full bg-black/60 border border-zinc-800 p-4 text-xs font-bold tracking-widest uppercase focus:border-yellow-500 focus:outline-none transition-all"
-          required
-        />
-      </div>
-      <div className="space-y-1">
-        <input
-          type="password"
-          placeholder="CREATE ACCESS CODE"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full bg-black/60 border border-zinc-800 p-4 text-xs font-bold tracking-widest uppercase focus:border-yellow-500 focus:outline-none transition-all"
-          required
-        />
-      </div>
+      <input
+        type="email"
+        placeholder="NEW FIGHTER EMAIL"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="w-full bg-black/60 border border-zinc-800 p-4 text-xs font-bold tracking-widest uppercase focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 focus:outline-none transition-all"
+        required
+      />
+      <input
+        type="password"
+        placeholder="CREATE ACCESS CODE"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="w-full bg-black/60 border border-zinc-800 p-4 text-xs font-bold tracking-widest uppercase focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 focus:outline-none transition-all"
+        required
+      />
       <button
         type="submit"
-        className="w-full bg-yellow-500 text-black py-4 font-black uppercase tracking-[0.3em] italic hover:bg-white transition-all shadow-[0_0_20px_rgba(234,179,8,0.2)]"
+        className="w-full bg-yellow-500 text-black py-4 font-black uppercase tracking-[0.3em] italic hover:bg-white transition-all shadow-[0_10px_20px_rgba(234,179,8,0.2)]"
       >
         ESTABLISH PROFILE
       </button>
