@@ -15,8 +15,8 @@ const RankBadge = ({ rank }) => {
   const tiers = {
     "White Prajiat": { color: "border-zinc-500 text-zinc-500" },
     "Blue Prajiat": { color: "border-blue-500 text-blue-500" },
-    "Gold Prajiat": { color: "border-yellow-500 text-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.2)]" },
-    "Black Prajiat": { color: "border-white text-white shadow-[0_0_15px_rgba(255,255,255,0.1)]" }
+    "Gold Prajiat": { color: "border-yellow-500 text-yellow-500" },
+    "Black Prajiat": { color: "border-white text-white" }
   };
   const current = tiers[rank] || tiers["White Prajiat"];
   return (
@@ -81,14 +81,12 @@ function App() {
     <div className="min-h-screen bg-zinc-950 text-white selection:bg-yellow-500 selection:text-black overflow-x-hidden">
       <AnimatePresence mode="wait">
         {!user ? (
-          /* --- ARENA SIGN IN SCREEN --- */
           <motion.div 
             key="auth" 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             className="relative h-screen w-full flex flex-col items-center justify-center p-6 overflow-hidden"
           >
-            {/* BACKGROUND LAYER */}
             <div 
               className="absolute inset-0 z-0 bg-cover bg-center"
               style={{ 
@@ -98,15 +96,13 @@ function App() {
             />
             <div className="absolute inset-0 z-10 bg-black/40 shadow-[inset_0_0_150px_rgba(0,0,0,1)]" />
 
-            {/* CONTENT LAYER */}
             <div className="relative z-20 w-full max-w-[420px] flex flex-col items-center">
+              {/* NO GLOW: drop-shadow removed */}
               <h1 className="text-6xl font-black italic tracking-tighter uppercase mb-10 text-center">
                 IRON <span className="text-yellow-500">SHIN</span>
               </h1>
               
-              {/* --- PROPER FORM CARD --- */}
               <div className="w-full bg-black/80 border border-zinc-800 p-8 shadow-2xl backdrop-blur-md relative">
-                {/* Form Header */}
                 <div className="mb-8 border-b border-zinc-900 pb-4 flex justify-between items-end">
                   <p className="text-[10px] font-black uppercase tracking-[0.4em] text-yellow-500 italic">
                     {showLogin ? "System_Login" : "Registry_Protocol"}
@@ -114,7 +110,6 @@ function App() {
                   <p className="text-[8px] text-zinc-600 font-bold tracking-widest uppercase">v2.0.26</p>
                 </div>
 
-                {/* Internal Form Components */}
                 {showLogin ? <Login /> : <Register />}
               </div>
 
@@ -127,12 +122,12 @@ function App() {
             </div>
           </motion.div>
         ) : (
-          /* --- DASHBOARD --- */
           <motion.div key="system" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col min-h-screen">
             <nav className="border-b border-zinc-800 bg-black/80 backdrop-blur-xl p-4 flex justify-between items-center sticky top-0 z-50">
               <div className="flex items-center gap-4">
+                {/* NO GLOW: Nav title also clean */}
                 <h2 className="text-2xl font-black italic uppercase tracking-tighter">IRON <span className="text-yellow-500">SHIN</span></h2>
-                <div className={`px-2 py-0.5 text-[9px] font-black uppercase tracking-widest ${isAdmin ? 'bg-yellow-500 text-black shadow-[0_0_15px_rgba(234,179,8,0.4)]' : 'bg-zinc-800 text-zinc-400'}`}>
+                <div className={`px-2 py-0.5 text-[9px] font-black uppercase tracking-widest ${isAdmin ? 'bg-yellow-500 text-black' : 'bg-zinc-800 text-zinc-400'}`}>
                   {isAdmin ? "MASTER / KRU" : "Fighter"}
                 </div>
               </div>
